@@ -1,6 +1,8 @@
 package almostrenoir.exchangerate.currencies.services.currencyfetch.nbp;
 
 import almostrenoir.exchangerate.currencies.dtos.incoming.CurrencyFetchIncomingDTO;
+import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
+import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
 import almostrenoir.exchangerate.shared.exceptions.DataNotFoundException;
 import almostrenoir.exchangerate.shared.exceptions.ExternalServiceException;
 import almostrenoir.exchangerate.shared.httpclient.HttpClient;
@@ -27,18 +29,23 @@ class NBPCurrencyFetchServiceTest {
 
     @Mock
     private HttpClient httpClient;
+
+    @Mock
+    private CurrencyRequestRepository currencyRequestRepository;
+
     private NBPCurrencyFetchService currencyFetchService;
 
     @BeforeEach
     void setup() {
-        currencyFetchService = new NBPCurrencyFetchService(httpClient);
+        currencyFetchService = new NBPCurrencyFetchService(httpClient, currencyRequestRepository);
     }
 
     @Test
     void shouldReturnOnlyValueOnSuccessfulAPICall() {
         NBPTableRecord tableRecord = createNBPTableRecord();
         when(httpClient.get(anyString(), eq(NBPTableRecord.class), anyInt())).thenReturn(Mono.just(tableRecord));
-        BigDecimal expected = new BigDecimal("4.0377");
+        BigDecimal expectedResult = new BigDecimal("4.0377");
+        CurrencyRequest expectedModelToPersist = createExpectedCurrencyRequestToPersist(expectedResult);
 
         BigDecimal result = currencyFetchService.getCurrentCurrencyValue(INCOMING_DTO).block();
 
@@ -47,7 +54,8 @@ class NBPCurrencyFetchServiceTest {
                 eq(NBPTableRecord.class),
                 anyInt()
         );
-        assertEquals(expected, result);
+        verify(currencyRequestRepository).add(eq(expectedModelToPersist));
+        assertEquals(expectedResult, result);
     }
 
     private NBPTableRecord createNBPTableRecord() {
@@ -62,6 +70,14 @@ class NBPCurrencyFetchServiceTest {
                 .currency("dolar amerykański")
                 .code("USD")
                 .rates(List.of(rate))
+                .build();
+    }
+
+    private CurrencyRequest createExpectedCurrencyRequestToPersist(BigDecimal expectedRateValue) {
+        return CurrencyRequest.builder()
+                .requester(INCOMING_DTO.getName())
+                .currency(INCOMING_DTO.getCurrency())
+                .rateValue(expectedRateValue)
                 .build();
     }
 
