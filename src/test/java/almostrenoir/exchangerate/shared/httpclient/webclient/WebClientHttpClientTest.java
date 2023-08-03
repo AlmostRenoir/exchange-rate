@@ -15,19 +15,19 @@ class WebClientHttpClientTest {
     private static final int WIREMOCK_PORT = 8092;
     private static final String WIREMOCK_URL = "http://localhost:" + WIREMOCK_PORT;
 
-    private static WebClientHttpClient httpClient;
-    private static WireMockServer wireMockServer;
+    private WebClientHttpClient httpClient;
+    private WireMockServer wireMockServer;
 
-    @BeforeAll
-    static void setup() {
+    @BeforeEach
+    void setup() {
         httpClient = new WebClientHttpClient();
         wireMockServer = new WireMockServer(WIREMOCK_PORT);
         wireMockServer.start();
         configureFor(WIREMOCK_PORT);
     }
 
-    @AfterAll
-    static void teardown() {
+    @AfterEach
+    void teardown() {
         wireMockServer.stop();
     }
 

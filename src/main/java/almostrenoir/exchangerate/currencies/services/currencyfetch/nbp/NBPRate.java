@@ -1,14 +1,14 @@
 package almostrenoir.exchangerate.currencies.services.currencyfetch.nbp;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class NBPRate {
     private String no;
