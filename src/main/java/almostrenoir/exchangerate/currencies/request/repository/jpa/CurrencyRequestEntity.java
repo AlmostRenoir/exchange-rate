@@ -3,6 +3,7 @@ package almostrenoir.exchangerate.currencies.request.repository.jpa;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +27,8 @@ public class CurrencyRequestEntity {
     @NotBlank
     private String requester;
 
-    @NotBlank
+    @NotNull
+    @Size(min = 3, max = 3)
     private String currency;
 
     @Builder.Default
