@@ -1,14 +1,14 @@
 package almostrenoir.exchangerate.currencies.services.currencyfetch.nbp;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.Collections;
 import java.util.List;
 
 @Getter
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class NBPTableRecord {
     private String table;
