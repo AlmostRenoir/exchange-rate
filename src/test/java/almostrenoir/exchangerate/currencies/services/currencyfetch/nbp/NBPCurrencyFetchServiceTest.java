@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class NBPCurrencyFetchServiceTest {
 
-    private static final CurrencyFetchIncomingDTO INCOMING_DTO = CurrencyFetchIncomingDTO.builder()
-            .name("Foo Bar").currency("usd").build();
+    private static final CurrencyFetchIncomingDTO INCOMING_DTO = new CurrencyFetchIncomingDTO("usd", "Foo Bar");
 
     @Mock
     private HttpClient httpClient;

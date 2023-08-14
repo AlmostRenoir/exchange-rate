@@ -3,18 +3,14 @@ package almostrenoir.exchangerate.currencies.dtos.incoming;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@EqualsAndHashCode
-@Builder
+@Data
 public class CurrencyFetchIncomingDTO {
-    @NotNull
-    @Size(min = 3, max = 3)
-    private String currency;
+    @NotNull(message = "Currency code cannot be null")
+    @Size(min = 3, max = 3, message = "Currency code must be exactly 3 characters long")
+    private final String currency;
 
-    @NotBlank
-    private String name;
+    @NotBlank(message = "Name cannot be blank")
+    private final String name;
 }
