@@ -1,14 +1,10 @@
 package almostrenoir.exchangerate.currencies.dtos.outgoing;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Getter
-@AllArgsConstructor
-@EqualsAndHashCode
+@Data
 public class CurrencyFetchOutgoingDTO {
     private final BigDecimal value;
 }

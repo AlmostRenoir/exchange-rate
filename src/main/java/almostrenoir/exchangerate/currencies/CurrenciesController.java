@@ -2,7 +2,7 @@ package almostrenoir.exchangerate.currencies;
 
 import almostrenoir.exchangerate.currencies.dtos.incoming.CurrencyFetchIncomingDTO;
 import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyFetchOutgoingDTO;
-import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestDTO;
+import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestOutgoingDTO;
 import almostrenoir.exchangerate.currencies.services.main.CurrenciesMainService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class CurrenciesController {
     }
 
     @GetMapping("/requests")
-    public List<CurrencyRequestDTO> getRequests() {
+    public List<CurrencyRequestOutgoingDTO> getRequests() {
         return currenciesMainService.getRequests();
     }
 

@@ -2,7 +2,7 @@ package almostrenoir.exchangerate.currencies.services.main.def;
 
 import almostrenoir.exchangerate.currencies.dtos.incoming.CurrencyFetchIncomingDTO;
 import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyFetchOutgoingDTO;
-import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestDTO;
+import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestOutgoingDTO;
 import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
 import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
 import almostrenoir.exchangerate.currencies.services.currencyfetch.CurrencyFetchService;
@@ -47,6 +47,7 @@ class DefaultCurrenciesMainServiceTest {
 
         CurrencyFetchOutgoingDTO result = currenciesMainService.getCurrentCurrencyValue(currencyFetchIncomingDTO).block();
 
+        assertNotNull(result);
         assertEquals(currencyValue, result.getValue());
     }
 
@@ -55,11 +56,11 @@ class DefaultCurrenciesMainServiceTest {
         List<CurrencyRequest> requests = createCurrencyRequests();
         when(currencyRequestRepository.findAll()).thenReturn(requests);
 
-        List<CurrencyRequestDTO> result = currenciesMainService.getRequests();
+        List<CurrencyRequestOutgoingDTO> result = currenciesMainService.getRequests();
 
         assertEquals(requests.size(), result.size());
         CurrencyRequest firstRequest = requests.get(0);
-        CurrencyRequestDTO firstRequestDTO = result.stream()
+        CurrencyRequestOutgoingDTO firstRequestDTO = result.stream()
                 .filter(dto -> dto.getId().equals(firstRequest.getId()))
                 .findFirst()
                 .orElseThrow();
@@ -93,7 +94,7 @@ class DefaultCurrenciesMainServiceTest {
     void shouldReturnEmptyRequestsListIfNothingFound() {
         when(currencyRequestRepository.findAll()).thenReturn(List.of());
 
-        List<CurrencyRequestDTO> result = currenciesMainService.getRequests();
+        List<CurrencyRequestOutgoingDTO> result = currenciesMainService.getRequests();
 
         assertEquals(0, result.size());
     }

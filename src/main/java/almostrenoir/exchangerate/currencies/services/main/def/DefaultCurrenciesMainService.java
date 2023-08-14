@@ -2,7 +2,7 @@ package almostrenoir.exchangerate.currencies.services.main.def;
 
 import almostrenoir.exchangerate.currencies.dtos.incoming.CurrencyFetchIncomingDTO;
 import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyFetchOutgoingDTO;
-import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestDTO;
+import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestOutgoingDTO;
 import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
 import almostrenoir.exchangerate.currencies.services.currencyfetch.CurrencyFetchService;
 import almostrenoir.exchangerate.currencies.services.main.CurrenciesMainService;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DefaultCurrenciesMainService implements CurrenciesMainService {
@@ -32,10 +31,10 @@ public class DefaultCurrenciesMainService implements CurrenciesMainService {
     }
 
     @Override
-    public List<CurrencyRequestDTO> getRequests() {
+    public List<CurrencyRequestOutgoingDTO> getRequests() {
         return currencyRequestRepository.findAll()
                 .stream()
-                .map(CurrencyRequestDTO::fromModel)
-                .collect(Collectors.toUnmodifiableList());
+                .map(CurrencyRequestOutgoingDTO::fromModel)
+                .toList();
     }
 }

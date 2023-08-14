@@ -1,8 +1,8 @@
 package almostrenoir.exchangerate.currencies.services.currencyfetch.nbp;
 
 import almostrenoir.exchangerate.currencies.dtos.incoming.CurrencyFetchIncomingDTO;
-import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
 import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
+import almostrenoir.exchangerate.currencies.request.repository.NewCurrencyRequest;
 import almostrenoir.exchangerate.currencies.services.currencyfetch.CurrencyFetchService;
 import almostrenoir.exchangerate.shared.exceptions.DataNotFoundException;
 import almostrenoir.exchangerate.shared.exceptions.ExternalServiceException;
@@ -53,12 +53,12 @@ public class NBPCurrencyFetchService implements CurrencyFetchService {
 
     private BigDecimal processTableRecord(NBPTableRecord tableRecord, CurrencyFetchIncomingDTO currencyFetchIncomingDTO) {
         BigDecimal result = tableRecord.getRates().get(0).getMid();
-        CurrencyRequest currencyRequest = CurrencyRequest.builder()
-                .requester(currencyFetchIncomingDTO.getName())
-                .currency(currencyFetchIncomingDTO.getCurrency())
-                .rateValue(result)
-                .build();
-        currencyRequestRepository.add(currencyRequest);
+        NewCurrencyRequest newCurrencyRequest = new NewCurrencyRequest(
+                currencyFetchIncomingDTO.getName(),
+                currencyFetchIncomingDTO.getCurrency(),
+                result
+        );
+        currencyRequestRepository.add(newCurrencyRequest);
         return result;
     }
 }

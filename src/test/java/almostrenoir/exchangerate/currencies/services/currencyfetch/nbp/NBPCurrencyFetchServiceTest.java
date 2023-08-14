@@ -1,8 +1,8 @@
 package almostrenoir.exchangerate.currencies.services.currencyfetch.nbp;
 
 import almostrenoir.exchangerate.currencies.dtos.incoming.CurrencyFetchIncomingDTO;
-import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
 import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
+import almostrenoir.exchangerate.currencies.request.repository.NewCurrencyRequest;
 import almostrenoir.exchangerate.shared.exceptions.DataNotFoundException;
 import almostrenoir.exchangerate.shared.exceptions.ExternalServiceException;
 import almostrenoir.exchangerate.shared.httpclient.HttpClient;
@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class NBPCurrencyFetchServiceTest {
 
-    private static final CurrencyFetchIncomingDTO INCOMING_DTO = CurrencyFetchIncomingDTO.builder()
-            .name("Foo Bar").currency("usd").build();
+    private static final CurrencyFetchIncomingDTO INCOMING_DTO = new CurrencyFetchIncomingDTO("usd", "Foo Bar");
 
     @Mock
     private HttpClient httpClient;
@@ -45,7 +44,7 @@ class NBPCurrencyFetchServiceTest {
         NBPTableRecord tableRecord = createNBPTableRecord();
         when(httpClient.get(anyString(), eq(NBPTableRecord.class), anyInt())).thenReturn(Mono.just(tableRecord));
         BigDecimal expectedResult = new BigDecimal("4.0377");
-        CurrencyRequest expectedModelToPersist = createExpectedCurrencyRequestToPersist(expectedResult);
+        NewCurrencyRequest expectedCurrencyRequestToPersist = createExpectedCurrencyRequestToPersist(expectedResult);
 
         BigDecimal result = currencyFetchService.getCurrentCurrencyValue(INCOMING_DTO).block();
 
@@ -54,7 +53,7 @@ class NBPCurrencyFetchServiceTest {
                 eq(NBPTableRecord.class),
                 anyInt()
         );
-        verify(currencyRequestRepository).add(eq(expectedModelToPersist));
+        verify(currencyRequestRepository).add(eq(expectedCurrencyRequestToPersist));
         assertEquals(expectedResult, result);
     }
 
@@ -73,12 +72,12 @@ class NBPCurrencyFetchServiceTest {
                 .build();
     }
 
-    private CurrencyRequest createExpectedCurrencyRequestToPersist(BigDecimal expectedRateValue) {
-        return CurrencyRequest.builder()
-                .requester(INCOMING_DTO.getName())
-                .currency(INCOMING_DTO.getCurrency())
-                .rateValue(expectedRateValue)
-                .build();
+    private NewCurrencyRequest createExpectedCurrencyRequestToPersist(BigDecimal expectedRateValue) {
+        return new NewCurrencyRequest(
+                INCOMING_DTO.getName(),
+                INCOMING_DTO.getCurrency(),
+                expectedRateValue
+        );
     }
 
     @Test

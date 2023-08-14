@@ -2,17 +2,15 @@ package almostrenoir.exchangerate.currencies.dtos.outgoing;
 
 import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
+@Data
 @Builder
-@EqualsAndHashCode
-public class CurrencyRequestDTO {
+public class CurrencyRequestOutgoingDTO {
 
     private final UUID id;
     private final String currency;
@@ -20,8 +18,8 @@ public class CurrencyRequestDTO {
     private final LocalDateTime date;
     private final BigDecimal value;
 
-    public static CurrencyRequestDTO fromModel(CurrencyRequest model) {
-        return CurrencyRequestDTO.builder()
+    public static CurrencyRequestOutgoingDTO fromModel(CurrencyRequest model) {
+        return CurrencyRequestOutgoingDTO.builder()
                 .id(model.getId())
                 .currency(model.getCurrency())
                 .name(model.getRequester())
