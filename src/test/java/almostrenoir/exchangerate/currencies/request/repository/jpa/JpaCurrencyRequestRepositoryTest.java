@@ -1,6 +1,7 @@
 package almostrenoir.exchangerate.currencies.request.repository.jpa;
 
 import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
+import almostrenoir.exchangerate.currencies.request.repository.NewCurrencyRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,28 +28,26 @@ class JpaCurrencyRequestRepositoryTest {
 
     @Test
     void shouldAddAndFind() {
-        CurrencyRequest currencyRequest = createCurrencyRequest();
+        NewCurrencyRequest newCurrencyRequest = createNewCurrencyRequest();
         LocalDateTime beforeAdd = LocalDateTime.now();
 
-        currencyRequestRepository.add(currencyRequest);
+        currencyRequestRepository.add(newCurrencyRequest);
         List<CurrencyRequest> findResult = currencyRequestRepository.findAll();
 
         assertEquals(1, findResult.size());
         CurrencyRequest currencyRequestFromDB = findResult.get(0);
-        assertEquals(currencyRequest.getRequester(), currencyRequestFromDB.getRequester());
-        assertEquals(currencyRequest.getCurrency(), currencyRequestFromDB.getCurrency());
-        assertEquals(currencyRequest.getRateValue(), currencyRequestFromDB.getRateValue());
+        assertEquals(newCurrencyRequest.getRequester(), currencyRequestFromDB.getRequester());
+        assertEquals(newCurrencyRequest.getCurrency(), currencyRequestFromDB.getCurrency());
+        assertEquals(newCurrencyRequest.getRateValue(), currencyRequestFromDB.getRateValue());
         assertNotNull(currencyRequestFromDB.getId());
         assertFalse(currencyRequestFromDB.getDate().isBefore(beforeAdd));
         assertFalse(currencyRequestFromDB.getDate().isAfter(LocalDateTime.now()));
     }
 
-    private CurrencyRequest createCurrencyRequest() {
-        return CurrencyRequest.builder()
-                .requester("Foo Bar")
-                .currency("usd")
-                .rateValue(new BigDecimal("4.0377"))
-                .build();
+    private NewCurrencyRequest createNewCurrencyRequest() {
+        return new NewCurrencyRequest(
+                "Foo Bar", "usd", new BigDecimal("4.0377")
+        );
     }
 
 }

@@ -2,14 +2,13 @@ package almostrenoir.exchangerate.currencies.request.repository.jpa;
 
 import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
 import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
-import jakarta.validation.Valid;
+import almostrenoir.exchangerate.currencies.request.repository.NewCurrencyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Repository
 public class JpaCurrencyRequestRepository implements CurrencyRequestRepository {
@@ -22,11 +21,11 @@ public class JpaCurrencyRequestRepository implements CurrencyRequestRepository {
     }
 
     @Override
-    public void add(@Valid CurrencyRequest currencyRequest) {
+    public void add(NewCurrencyRequest newCurrencyRequest) {
         CurrencyRequestEntity entity = CurrencyRequestEntity.builder()
-                .requester(currencyRequest.getRequester())
-                .currency(currencyRequest.getCurrency())
-                .rateValue(currencyRequest.getRateValue())
+                .requester(newCurrencyRequest.getRequester())
+                .currency(newCurrencyRequest.getCurrency())
+                .rateValue(newCurrencyRequest.getRateValue())
                 .build();
         autoJpaRepository.save(entity);
     }
@@ -36,7 +35,7 @@ public class JpaCurrencyRequestRepository implements CurrencyRequestRepository {
         return autoJpaRepository.findAll()
                 .stream()
                 .map(this::mapEntityToModel)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     private CurrencyRequest mapEntityToModel(CurrencyRequestEntity entity) {
