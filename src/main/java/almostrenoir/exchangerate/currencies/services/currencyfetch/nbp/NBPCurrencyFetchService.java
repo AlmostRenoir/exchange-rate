@@ -8,14 +8,15 @@ import almostrenoir.exchangerate.shared.exceptions.DataNotFoundException;
 import almostrenoir.exchangerate.shared.exceptions.ExternalServiceException;
 import almostrenoir.exchangerate.shared.httpclient.HttpClient;
 import almostrenoir.exchangerate.shared.httpclient.HttpException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class NBPCurrencyFetchService implements CurrencyFetchService {
 
@@ -24,12 +25,6 @@ public class NBPCurrencyFetchService implements CurrencyFetchService {
 
     private final HttpClient httpClient;
     private final CurrencyRequestRepository currencyRequestRepository;
-
-    @Autowired
-    public NBPCurrencyFetchService(HttpClient httpClient, CurrencyRequestRepository currencyRequestRepository) {
-        this.httpClient = httpClient;
-        this.currencyRequestRepository = currencyRequestRepository;
-    }
 
     @Override
     public Mono<BigDecimal> getCurrentCurrencyValue(CurrencyFetchIncomingDTO currencyFetchIncomingDTO) {

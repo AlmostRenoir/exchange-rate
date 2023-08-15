@@ -3,7 +3,7 @@ package almostrenoir.exchangerate.currencies.request.repository.jpa;
 import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
 import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
 import almostrenoir.exchangerate.currencies.request.repository.NewCurrencyRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,14 +11,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
+@RequiredArgsConstructor
 public class JpaCurrencyRequestRepository implements CurrencyRequestRepository {
 
     private final JpaRepository<CurrencyRequestEntity, UUID> autoJpaRepository;
-
-    @Autowired
-    public JpaCurrencyRequestRepository(JpaRepository<CurrencyRequestEntity, UUID> autoJpaRepository) {
-        this.autoJpaRepository = autoJpaRepository;
-    }
 
     @Override
     public void add(NewCurrencyRequest newCurrencyRequest) {

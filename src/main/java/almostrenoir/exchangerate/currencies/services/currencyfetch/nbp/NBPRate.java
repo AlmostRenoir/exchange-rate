@@ -5,13 +5,9 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data
 public class NBPRate {
-    private String no;
-    private LocalDate effectiveDate;
-    private BigDecimal mid;
+    private final String no;
+    private final LocalDate effectiveDate;
+    private final BigDecimal mid;
 }

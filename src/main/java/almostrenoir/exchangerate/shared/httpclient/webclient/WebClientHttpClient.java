@@ -16,8 +16,8 @@ public class WebClientHttpClient implements HttpClient {
 
     private final WebClient webClient;
 
-    public WebClientHttpClient() {
-        this.webClient = WebClient.create();
+    public WebClientHttpClient(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
     }
 
     @Override

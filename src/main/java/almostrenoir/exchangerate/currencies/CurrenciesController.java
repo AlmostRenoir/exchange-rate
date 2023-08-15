@@ -5,7 +5,7 @@ import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyFetchOutgoingD
 import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestOutgoingDTO;
 import almostrenoir.exchangerate.currencies.services.main.CurrenciesMainService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -14,14 +14,10 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/currencies")
+@RequiredArgsConstructor
 public class CurrenciesController {
 
     private final CurrenciesMainService currenciesMainService;
-
-    @Autowired
-    public CurrenciesController(CurrenciesMainService currenciesMainService) {
-        this.currenciesMainService = currenciesMainService;
-    }
 
     @PostMapping("/get-current-currency-value-command")
     public Mono<CurrencyFetchOutgoingDTO> getCurrentCurrencyValue(
