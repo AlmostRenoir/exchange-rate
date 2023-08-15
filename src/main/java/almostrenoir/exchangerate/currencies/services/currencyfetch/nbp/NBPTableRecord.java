@@ -5,16 +5,12 @@ import lombok.*;
 import java.util.Collections;
 import java.util.List;
 
-@Getter
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data
 public class NBPTableRecord {
-    private String table;
-    private String currency;
-    private String code;
-    private List<NBPRate> rates;
+    private final String table;
+    private final String currency;
+    private final String code;
+    private final List<NBPRate> rates;
 
     public List<NBPRate> getRates() {
         return Collections.unmodifiableList(rates);

@@ -58,18 +58,16 @@ class NBPCurrencyFetchServiceTest {
     }
 
     private NBPTableRecord createNBPTableRecord() {
-        NBPRate rate = NBPRate.builder()
-                .no("145/A/NBP/2023")
-                .effectiveDate(LocalDate.parse("2023-07-28"))
-                .mid(new BigDecimal("4.0377"))
-                .build();
+        NBPRate rate = new NBPRate(
+                "145/A/NBP/2023",
+                LocalDate.parse("2023-07-28"),
+                new BigDecimal("4.0377"));
 
-        return NBPTableRecord.builder()
-                .table("A")
-                .currency("dolar amerykański")
-                .code("USD")
-                .rates(List.of(rate))
-                .build();
+        return new NBPTableRecord(
+                "A",
+                "dolar amerykański",
+                "USD",
+                List.of(rate));
     }
 
     private NewCurrencyRequest createExpectedCurrencyRequestToPersist(BigDecimal expectedRateValue) {

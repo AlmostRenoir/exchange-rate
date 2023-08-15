@@ -1,8 +1,10 @@
 package almostrenoir.exchangerate.shared.httpclient.webclient;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import lombok.Getter;
+import lombok.Data;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Mono;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -10,17 +12,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import almostrenoir.exchangerate.shared.httpclient.HttpException;
 
+@SpringBootTest
 class WebClientHttpClientTest {
 
     private static final int WIREMOCK_PORT = 8092;
     private static final String WIREMOCK_URL = "http://localhost:" + WIREMOCK_PORT;
 
+    @Autowired
     private WebClientHttpClient httpClient;
+
     private WireMockServer wireMockServer;
 
     @BeforeEach
     void setup() {
-        httpClient = new WebClientHttpClient();
         wireMockServer = new WireMockServer(WIREMOCK_PORT);
         wireMockServer.start();
         configureFor(WIREMOCK_PORT);
@@ -43,6 +47,7 @@ class WebClientHttpClientTest {
         Mono<TestResponse> responseMono = httpClient.get(WIREMOCK_URL + "/success", TestResponse.class, 1500);
         TestResponse response = responseMono.block();
 
+        assertNotNull(response);
         assertEquals("Foo", response.getName());
         assertEquals(35, response.getAge());
     }
@@ -74,10 +79,10 @@ class WebClientHttpClientTest {
                 () -> httpClient.get(WIREMOCK_URL + "/timeout", TestResponse.class, 100).block());
     }
 
-    @Getter
+    @Data
     private static class TestResponse {
-        private String name;
-        private int age;
+        private final String name;
+        private final int age;
     }
 
 }
