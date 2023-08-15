@@ -1,6 +1,5 @@
 package almostrenoir.exchangerate.shared.httpclient.webclient;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,6 @@ public class WebClientHttpClient implements HttpClient {
 
     private final WebClient webClient;
 
-    @Autowired
     public WebClientHttpClient(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.build();
     }
