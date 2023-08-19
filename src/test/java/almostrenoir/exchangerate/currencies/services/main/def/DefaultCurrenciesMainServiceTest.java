@@ -6,6 +6,7 @@ import almostrenoir.exchangerate.currencies.dtos.outgoing.CurrencyRequestOutgoin
 import almostrenoir.exchangerate.currencies.request.CurrencyRequest;
 import almostrenoir.exchangerate.currencies.request.repository.CurrencyRequestRepository;
 import almostrenoir.exchangerate.currencies.services.currencyfetch.CurrencyFetchService;
+import almostrenoir.exchangerate.shared.pagination.PaginatedResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,6 +71,27 @@ class DefaultCurrenciesMainServiceTest {
         assertEquals(firstRequest.getDate(), firstRequestDTO.getDate());
     }
 
+    @Test
+    void shouldMapPaginatedRequests() {
+        List<CurrencyRequest> requests = createCurrencyRequests();
+        PaginatedResult<CurrencyRequest> paginatedRequests = new PaginatedResult<>(requests, 1);
+        when(currencyRequestRepository.findAll(eq(1))).thenReturn(paginatedRequests);
+
+        PaginatedResult<CurrencyRequestOutgoingDTO> result = currenciesMainService.getRequests(1);
+
+        assertEquals(paginatedRequests.getContent().size(), result.getContent().size());
+        CurrencyRequest secondRequest = paginatedRequests.getContent().get(1);
+        CurrencyRequestOutgoingDTO secondRequestDTO = result.getContent().stream()
+                .filter(dto -> dto.getId().equals(secondRequest.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(secondRequest.getRequester(), secondRequestDTO.getName());
+        assertEquals(secondRequest.getCurrency(), secondRequestDTO.getCurrency());
+        assertEquals(secondRequest.getRateValue(), secondRequestDTO.getValue());
+        assertEquals(secondRequest.getDate(), secondRequestDTO.getDate());
+        assertEquals(paginatedRequests.getTotalPages(), result.getTotalPages());
+    }
+
     private List<CurrencyRequest> createCurrencyRequests() {
         CurrencyRequest firstCurrencyRequest = CurrencyRequest.builder()
                 .id(UUID.randomUUID())
@@ -97,5 +119,15 @@ class DefaultCurrenciesMainServiceTest {
         List<CurrencyRequestOutgoingDTO> result = currenciesMainService.getRequests();
 
         assertEquals(0, result.size());
+    }
+
+    @Test
+    void shouldReturnEmptyPaginatedRequestsContentIfNothingFound() {
+        PaginatedResult<CurrencyRequest> emptyPage = new PaginatedResult<>(List.of(), 0);
+        when(currencyRequestRepository.findAll(anyInt())).thenReturn(emptyPage);
+
+        PaginatedResult<CurrencyRequestOutgoingDTO> result = currenciesMainService.getRequests(1);
+
+        assertEquals(0, result.getContent().size());
     }
 }

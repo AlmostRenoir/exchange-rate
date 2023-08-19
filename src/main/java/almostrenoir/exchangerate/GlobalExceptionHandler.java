@@ -2,6 +2,8 @@ package almostrenoir.exchangerate;
 
 import almostrenoir.exchangerate.shared.exceptions.DataNotFoundException;
 import almostrenoir.exchangerate.shared.exceptions.ExternalServiceException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,8 +18,10 @@ import org.springframework.web.reactive.result.method.annotation.ResponseEntityE
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -34,6 +38,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
+        List<String> errors = ex.getConstraintViolations()
+                .stream()
+                .map(ConstraintViolation::getMessage)
+                .toList();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
     @Override
     protected Mono<ResponseEntity<Object>> handleWebExchangeBindException(
             WebExchangeBindException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange
@@ -42,14 +55,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .getAllErrors()
                 .stream()
                 .map(FieldValidationError::fromObjectError)
-                .collect(Collectors.toUnmodifiableMap(
-                        FieldValidationError::field,
-                        error -> error.message().orElse("")
-                ));
+                .collect(FieldValidationError.TO_MAP_COLLECTOR);
         return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors));
     }
 
     private record FieldValidationError(String field, Optional<String> message) {
+        public static final Collector<FieldValidationError, ?, Map<String, String>> TO_MAP_COLLECTOR = Collectors.toUnmodifiableMap(
+            FieldValidationError::field,
+            error -> error.message().orElse("")
+        );
+
         public static FieldValidationError fromObjectError(ObjectError objectError) {
             FieldError fieldError = (FieldError) objectError;
             return new FieldValidationError(
